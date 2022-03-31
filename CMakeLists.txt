@@ -4,11 +4,22 @@ project(pc_ransac)
 
 set(CMAKE_CXX_FLAGS "-fpermissive")
 
+find_package(PCL 1.2 REQUIRED)
+
+include_directories(${PCL_INCLUDE_DIRS})
+link_directories(${PCL_LIBRARY_DIRS})
+add_definitions(${PCL_DEFINITIONS})
+
 include_directories(./)
 include_directories(./MiscLib/)
 FILE(GLOB SRC "./*.cpp")
 FILE(GLOB MISC_SRC "./MiscLib/*.cpp")
 
 add_library(libransac STATIC  ${SRC} ${MISC_SRC})
+
 add_executable(main main.cpp)
 target_link_libraries(main libransac)
+
+add_executable(ransac_pcl main_pcl.cpp)
+target_link_libraries(ransac_pcl libransac)
+target_link_libraries (ransac_pcl ${PCL_LIBRARIES})
