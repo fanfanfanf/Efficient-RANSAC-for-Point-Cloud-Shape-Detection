@@ -84,12 +84,12 @@ int main()
 	std::cout << "added " << pc.size() << " points" << std::endl;
 
 	RansacShapeDetector::Options ransacOptions;
-	ransacOptions.m_epsilon = .2f * pc.getScale(); // set distance threshold to .01f of bounding box width
+	ransacOptions.m_epsilon = .005f * pc.getScale(); // set distance threshold to .01f of bounding box width
 		// NOTE: Internally the distance threshold is taken as 3 * ransacOptions.m_epsilon!!!
 	ransacOptions.m_bitmapEpsilon = .02f * pc.getScale(); // set bitmap resolution to .02f of bounding box width
 		// NOTE: This threshold is NOT multiplied internally!
-	ransacOptions.m_normalThresh = .9f; // this is the cos of the maximal normal deviation
-	ransacOptions.m_minSupport = 10; // this is the minimal numer of points required for a primitive
+	ransacOptions.m_normalThresh = .8f; // this is the cos of the maximal normal deviation
+	ransacOptions.m_minSupport = 1000; // this is the minimal numer of points required for a primitive
 	ransacOptions.m_probability = .001f; // this is the "probability" with which a primitive is overlooked
 
 	RansacShapeDetector detector(ransacOptions); // the detector object
@@ -135,6 +135,7 @@ int main()
     std::vector<pcl::PointCloud<pcl::PointXYZ>::Ptr> pcl_planes;
     auto& src_pts = cloud_src->points;
     int index = 0;
+    PointCloud_Ransac::reverse_iterator point_itr = start;
     for (; shape_itr != shapes.end(); ++shape_itr) {
         const PrimitiveShape *primitive = shape_itr->first;
         std::size_t num = shape_itr->second;
@@ -147,8 +148,6 @@ int main()
         //     ++point_itr;
         // }
         // start = point_itr;
-
-        PointCloud_Ransac::reverse_iterator point_itr = start;
         pcl::PointCloud<pcl::PointXYZ>::Ptr plane_points(new pcl::PointCloud<pcl::PointXYZ>);
         plane_points->points.reserve(num);
         for (std::size_t count = 0; count < num; ++count) {
